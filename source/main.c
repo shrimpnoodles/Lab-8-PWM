@@ -43,7 +43,7 @@ void PWM_off(){
 }
 
 
-enum States { start, init, startPoint, up, waitUp, down, waitDown, off, waitOff} state;
+enum States { start, init, c4, d4, e4} state;
 unsigned char button;
 void Tick(){ // transitions
 	switch(state){
@@ -51,58 +51,41 @@ void Tick(){ // transitions
 			state = init;
 			break;
 		case init:
-			state = startPoint;
-			break;
-		case startPoint:
-			if(button == 0x02){
-				state = up;
+			if(button == 0X01){
+				state = c4;
 			}
-			else if(button == 0x04){
-				state = down;
+			else if(button == 0x02){
+				state = d4;
 			}
-			else if(button == 0x01){
-				state = off;
+			else if(button == 0X04){
+				state = e4;
 			}
 			else{
-				state = startPoint;
+				state = init;
 			}
 			break;
-		case up:
-			state = waitUp;
-			break;
-		case waitUp:
-			if(button == 0x00){
-				state = startPoint;
-			}
-			else{
-				state = waitUp;
-			}
-			break;
-		case down:
-			state = waitDown;
-			break;
-		case waitDown:
-			if(button == 0x00){
-				state = startPoint;
-			}
-			else{
-				state = waitDown;
-			}
-			break;
-		case off:
-			if(button == 0x00){
-				state = waitOff;
-			}
-			else{
-				state = off;
-			}
-			break;
-		case waitOff:
+		case c4:
 			if(button == 0x01){
-				state = startPoint;
+				state = c4;
 			}
 			else{
-				state = waitOff;
+				state = init;
+			}
+			break;
+		case d4:
+			if(button == 0x02){
+				state = d4;
+			}
+			else{
+				state = init;
+			}
+			break;
+		case e4:
+			if(button == 0x04){
+				state = e4;
+			}
+			else{
+				state = init;
 			}
 			break;
 		default:
@@ -115,6 +98,16 @@ void Tick(){ // transitions
 			break;
 		case init:
 			set_PWM(0);
+			break;
+		case c4:
+			set_PWM(2616.3);
+			break;
+		case d4:
+			set_PWM(2936.6);
+			break;
+		case e4:
+			set_PWM(3296.3);
+			break;
 		default:
 			break;
 	}
@@ -135,3 +128,4 @@ int main(void) {
     }
     return 1;
 }
+

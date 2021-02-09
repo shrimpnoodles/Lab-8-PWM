@@ -17,7 +17,7 @@ void set_PWM(double frequency){
 	
 	if(frequency!=current_frequency){
 		if(!frequency){TCCR3B&=0X08;}
-		else{ TCCRB |= 0x03;}
+		else{ TCCR3B |= 0x03;}
 
 		if(frequency<0.954){ OCR3A = 0xFFFF;}
 	
@@ -30,14 +30,14 @@ void set_PWM(double frequency){
 	}
 }
 
-void PWN_on(){
+void PWM_on(){
 	TCCR3A = (1<< COM3A0);
 	TCCR3B = (1 << WGM32) | (1 << CS31) | (1 << CS30);
 
-	set_PWN(0);
+	set_PWM(0);
 }
 
-void PWN_off(){
+void PWM_off(){
 	TCCR3A = 0x00;
 	TCCR3B = 0x00;
 }
@@ -89,7 +89,7 @@ void Tick(){ // transitions
 			}
 			break;
 		default:
-			case = start;
+			state = start;
 			break;
 		}
 	
@@ -97,16 +97,16 @@ void Tick(){ // transitions
 		case start:
 			break;
 		case init:
-			set_PWN(0);
+			set_PWM(0);
 			break;
 		case c4:
-			set_PWN(261.63);
+			set_PWM(2616.3);
 			break;
 		case d4:
-			set_PWN(293.66);
+			set_PWM(2936.6);
 			break;
 		case e4:
-			set_PWN(329.63);
+			set_PWM(3296.3);
 			break;
 		default:
 			break;
@@ -120,7 +120,7 @@ int main(void) {
 
 	button = 0x00;
 	state = start;
-	PWN_on();
+	PWM_on();
     /* Insert your solution below */
     while (1) {
 	button = ~PINA;
@@ -128,3 +128,4 @@ int main(void) {
     }
     return 1;
 }
+
