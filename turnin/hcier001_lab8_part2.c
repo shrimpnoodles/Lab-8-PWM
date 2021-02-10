@@ -42,9 +42,9 @@ void PWM_off(){
 	TCCR3B = 0x00;
 }
 
-
 enum States { start, init, startPoint, up, waitUp, down, waitDown, off, waitOff} state;
 unsigned char button;
+double freq;
 void Tick(){ // transitions
 	switch(state){
 		case start:
@@ -114,17 +114,105 @@ void Tick(){ // transitions
 		case start:
 			break;
 		case init:
+			set_PWM(261.63);
+			freq = 261.63;
+			break;
+		case startPoint:
+			break;
+		case up:
+			if(freq == 261.63){
+				set_PWM(293.66);
+				freq = 293.66;
+				break;
+			}
+			else if(freq == 293.66){
+				set_PWM(329.63);
+				freq = 329.63;
+				break;
+			}
+			else if(freq == 329.63){
+				set_PWM(349.23);
+				freq = 349.23;
+				break;
+			}
+			else if(freq ==349.23){
+				set_PWM(392.00);
+				freq = 392.00;
+				break;
+			}
+			else if(freq == 392.00){
+				set_PWM(440.00);
+				freq = 440.00;
+				break;
+			}
+			else if(freq == 440.00){
+				set_PWM(493.88);
+				freq = 493.88;
+				break;
+			}
+			else if(freq == 493.88){
+				set_PWM(523.25);
+				freq = 523.25;
+				break;
+			}
+			break;
+		case waitUp:
+			break;
+		case down:
+			 if(freq == 293.66){
+				set_PWM(261.63);
+				freq = 261.63;
+			}
+			else  if(freq == 329.63){
+				set_PWM(293.66);
+				freq = 293.66;
+				break;
+			}
+			else if(freq == 349.23){
+				set_PWM(329.63);
+				freq = 329.63;
+				break;
+			}
+			else if(freq ==392.00){
+				set_PWM(349.23);
+				freq = 349.23;
+				break;
+			}
+			else if(freq == 440.00){
+				set_PWM(392.00);
+				freq = 392.00;
+				break;
+			}
+			else if(freq == 493.88){
+				set_PWM(440.00);
+				freq = 440.00;
+				break;
+			}
+			else if(freq == 523.25){
+				set_PWM(493.88);
+				freq = 493.88;
+				break;
+			}
+			break;
+		case waitDown:
+			break;
+		case off:
 			set_PWM(0);
+			break;
+		case waitOff:
+			break;
 		default:
 			break;
 	}
 }
 
+
 int main(void) {
     /* Insert DDR and PORT initializations */
 	DDRA = 0x00; PORTA = 0xff;
 	DDRB = 0xff; PORTB = 0x00;
-
+	
+	freq = 0.0;
 	button = 0x00;
 	state = start;
 	PWM_on();
@@ -135,3 +223,4 @@ int main(void) {
     }
     return 1;
 }
+
