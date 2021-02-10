@@ -42,9 +42,10 @@ void PWM_off(){
 	TCCR3B = 0x00;
 }
 
-enum States { start, init, startPoint, up, waitUp, down, waitDown, off, waitOff} state;
+enum States { start, init, startPoint, up, waitUp, down, waitDown, off, waitOff, on} state;
 unsigned char button;
 double freq;
+unsigned char sound;
 void Tick(){ // transitions
 	switch(state){
 		case start:
@@ -90,21 +91,41 @@ void Tick(){ // transitions
 			}
 			break;
 		case off:
+	//		if(button == 0x00){
+	//			state = waitOff;
+	//		}
+	//		else{
+	//			state = off;
+	//		}
+			
 			if(button == 0x00){
 				state = waitOff;
 			}
-			else{
+			else {
 				state = off;
 			}
 			break;
 		case waitOff:
-			if(button == 0x01){
-				state = startPoint;
-			}
-			else{
+	//		if(button == 0x01){
+	//			state = startPoint;
+	//		}
+	//		else{
+	//			state = waitOff;
+	//		}
+			if(button == 0x00){
 				state = waitOff;
 			}
+			else if(button == 0x01){
+				state = on;
+			}
 			break;
+		case on:
+			if(button == 0x00){
+				state = on;
+			}
+			else if(button == 0x01){
+				state = startPoint;
+			}
 		default:
 			state = start;
 			break;
@@ -114,10 +135,12 @@ void Tick(){ // transitions
 		case start:
 			break;
 		case init:
+			sound =1;
 			set_PWM(261.63);
 			freq = 261.63;
 			break;
 		case startPoint:
+			set_PWM(freq);
 			break;
 		case up:
 			if(freq == 261.63){
@@ -196,10 +219,13 @@ void Tick(){ // transitions
 			break;
 		case waitDown:
 			break;
-		case off:
-			set_PWM(0);
+		case off:	
+			set_PWM(0.0);
 			break;
 		case waitOff:
+			break;
+		case on:
+		//	set_PWM(freq);
 			break;
 		default:
 			break;
@@ -212,7 +238,7 @@ int main(void) {
 	DDRA = 0x00; PORTA = 0xff;
 	DDRB = 0xff; PORTB = 0x00;
 	
-	freq = 0.0;
+	freq = 261.63;
 	button = 0x00;
 	state = start;
 	PWM_on();
